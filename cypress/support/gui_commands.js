@@ -1,6 +1,23 @@
+// Cypress.Commands.add('login', (
+//   user = Cypress.env('user_name'),
+//   password = Cypress.env('user_password'),
+// ) => {
+//   const login = () => {
+//     cy.visit('/users/sign_in')
+
+//     cy.get("[data-qa-selector='login_field']").type(user)
+//     cy.get("[data-qa-selector='password_field']").type(password, { log: false })
+//     cy.get("[data-qa-selector='sign_in_button']").click()
+//   }
+
+//   login()
+// })
+
+// Substituido na aula 4 para integrar função de cache de sessão
 Cypress.Commands.add('login', (
   user = Cypress.env('user_name'),
   password = Cypress.env('user_password'),
+  { cacheSession = true } = {},
 ) => {
   const login = () => {
     cy.visit('/users/sign_in')
@@ -10,7 +27,15 @@ Cypress.Commands.add('login', (
     cy.get("[data-qa-selector='sign_in_button']").click()
   }
 
-  login()
+  const options = {
+    cacheAcrossSpecs: true,
+  }
+
+  if (cacheSession) {
+    cy.session(user, login, options)
+  } else {
+    login()
+  }
 })
 Cypress.Commands.add('logout', () => {
   cy.get('.header-user-dropdown-toggle').click()
